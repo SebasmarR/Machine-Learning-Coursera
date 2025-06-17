@@ -60,6 +60,23 @@ def derivatives(x, y, w, b):
     return dw / len(x), db / len(x)
 
 
+def normalize_data(x):
+    """
+    Normalize the input features.
+    Args:
+        x (list): List of list with the input features.
+
+    Returns:
+        np.ndarray: Normalized input features.
+    """
+    x = np.array(x)
+    mean = np.mean(x, axis=0)
+    std_dev = np.std(x, axis=0)
+
+    normalized_x = (x - mean) / std_dev
+    return normalized_x
+
+
 def gradient_descent(x, y, learning_rate, iterations):
     """
     Perform gradient descent to minimize the error function.
@@ -75,6 +92,10 @@ def gradient_descent(x, y, learning_rate, iterations):
     """
 
     # Initialize w as a zero vector of the same length as x[0]
+    if len(x) == 0 or len(y) == 0:
+        raise ValueError("Input lists x and y must not be empty.")
+
+    x = normalize_data(x)
     w = np.zeros(len(x[0]))
     b = 0
     for _ in range(iterations):
@@ -87,6 +108,8 @@ def gradient_descent(x, y, learning_rate, iterations):
 
     return w, b, error
 
+
+# _________________________________________________________________________________________________________________________________________________________________________
 
 def multiple_linear_regression(x, y):
     """

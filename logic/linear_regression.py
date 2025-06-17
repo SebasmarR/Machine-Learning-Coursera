@@ -1,3 +1,6 @@
+import numpy as np
+
+
 def error_function(x, y, w, b):
     """
     Calculate the error for a linear regression model.
@@ -14,18 +17,16 @@ def error_function(x, y, w, b):
     if len(x) != len(y):
         raise ValueError("Input lists x and y must have the same length.")
 
+    x = np.array(x)
+    y = np.array(y)
+
     total_error = 0.0
 
+    # Calculates the prediction for each point in the dataset
+    prediction = np.dot(x, w) + b
+
     # Calculates the total error for each point in the dataset
-    for i in range(len(x)):
-        prediction = w * x[i] + b
-        total_error += (prediction - y[i]) ** 2
-
-    # Calculates the mean squeared error
-
-    mean_squared_error = total_error / len(x)
-
-    return mean_squared_error
+    return np.mean((prediction - y) ** 2)
 
 
 def derivatives(x, y, w, b):
@@ -44,16 +45,31 @@ def derivatives(x, y, w, b):
     if len(x) != len(y):
         raise ValueError("Input lists x and y must have the same length.")
 
-    dw = 0.0
-    db = 0.0
+    x = np.array(x)
+    y = np.array(y)
+
+    # Calculates the prediction for each point in the dataset
+    prediction = np.dot(x, w) + b
 
     # Calculates the derivatives for each point in the dataset
-    for i in range(len(x)):
-        prediction = w * x[i] + b
-        dw += (prediction - y[i]) * x[i]
-        db += (prediction - y[i])
+    return np.mean((prediction - y) * x), np.mean(prediction - y)
 
-    return dw / len(x), db / len(x)
+
+def normalize_data(x):
+    """
+    Normalize the input features.
+    Args:
+        x (list): List of input features.
+
+    Returns:
+        np.ndarray: Normalized input features.
+    """
+    x = np.array(x)
+    mean = np.mean(x)
+    std_dev = np.std(x)
+
+    normalized_x = (x - mean) / std_dev
+    return normalized_x
 
 
 def gradient_descent(x, y, w, b, learning_rate, iterations):
@@ -69,6 +85,16 @@ def gradient_descent(x, y, w, b, learning_rate, iterations):
     Returns:
         tuple: Updated values of w, b and the final error.
     """
+
+    if len(x) != len(y):
+        raise ValueError("Input lists x and y must have the same length.")
+
+    # Normalize the input features
+    x = normalize_data(x)
+
+    # Convert lists to numpy arrays for efficient calculations
+    x = np.array(x)
+    y = np.array(y)
 
     for _ in range(iterations):
         dw, db = derivatives(x, y, w, b)
