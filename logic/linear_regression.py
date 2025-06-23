@@ -69,10 +69,16 @@ def normalize_data(x):
     std_dev = np.std(x)
 
     normalized_x = (x - mean) / std_dev
-    return normalized_x
+    return normalized_x, mean, std_dev
 
 
-def gradient_descent(x, y, w, b, learning_rate, iterations):
+def denormalize_coefficients(w, b, mean_x, std_x):
+    w_real = w / std_x
+    b_real = b - (w * mean_x / std_x)
+    return w_real, b_real
+
+
+def gradient_descent(x, y, w, b, learning_rate, automatic_convergence=False, iterations=None):
     """
     Perform gradient descent to minimize the error function.
     Args:
@@ -81,29 +87,57 @@ def gradient_descent(x, y, w, b, learning_rate, iterations):
         w (float): Initial value for the slope.
         b (float): Initial value for the intercept.
         learning_rate (float): Learning rate for the gradient descent.
+        automatic_convergence (bool): If this is True, the function will automatically determine the number of iterations based on convergence criteria.
         iterations (int): Number of iterations to perform.
     Returns:
         tuple: Updated values of w, b and the final error.
     """
+    if automatic_convergence and iterations is not None:
+        raise ValueError(
+            "If automatic_convergence is True, iterations must be None.")
+    if not automatic_convergence and iterations is None:
+        raise ValueError(
+            "If automatic_convergence is False, iterations must be specified.")
 
     if len(x) != len(y):
         raise ValueError("Input lists x and y must have the same length.")
 
     # Normalize the input features
-    x = normalize_data(x)
+    x, mean, std_dev = normalize_data(x)
 
     # Convert lists to numpy arrays for efficient calculations
     x = np.array(x)
     y = np.array(y)
 
-    for _ in range(iterations):
-        dw, db = derivatives(x, y, w, b)
-        w -= learning_rate * dw
-        b -= learning_rate * db
+    if iterations is not None:
 
-    # Calculates the error after the iterations
-    error = error_function(x, y, w, b)
+        for _ in range(iterations):
+            dw, db = derivatives(x, y, w, b)
+            w -= learning_rate * dw
+            b -= learning_rate * db
 
+        # Calculates the error after the iterations
+        error = error_function(x, y, w, b)
+
+    else:
+        iterations = 0
+        while True:
+
+            iterations += 1
+            last_error = error_function(x, y, w, b)
+
+            dw, db = derivatives(x, y, w, b)
+            w -= learning_rate * dw
+            b -= learning_rate * db
+
+            error = error_function(x, y, w, b)
+
+            if abs(last_error - error) < 1e-3:  # Convergence criteria
+                print(f"Converged after {iterations} iterations.")
+                break
+
+    # Denormalize coefficients
+    w, b = denormalize_coefficients(w, b, mean, std_dev)
     return w, b, error
 
 

@@ -21,16 +21,36 @@ def scipy_linear_regression(x, y):
     return slope, intercept, error, time_taken
 
 
-def coursera_linear_regression(x, y):
+def coursera_linear_regression_iterations(x, y):
     """
-    This code was used in the coursera course but is not used in the final version because it needs to many things like:
-        - First of all a learning rate, which is difficult to find an exact value without getting a NaN value.
-        - Second, it needs a lot of iterations to get a good value, iterations that we don't know how many are needed to get a good value.
-        - Third, it is not as fast as the linear regression function that we created.
+    This is the implementation of the aprox to linear regression that was used in the coursera course.
+    It uses a gradient descent algorithm to find the best slope and intercept for the linear regression.
+    It uses a learning rate of 0.001 and a maximum of 10000 iterations.
     """
     start_time = time.time()
 
-    slope, intercept, error = lr.gradient_descent(x, y, 0, 0, 0.001, 10000)
+    slope, intercept, error = lr.gradient_descent(
+        x, y, 0, 0, 0.001, iterations=10000)
+
+    print(f"Custom Slope: {slope}, Custom Intercept: {intercept}")
+    print(f"Custom Error: {error}")
+
+    end_time = time.time()
+    time_taken = end_time - start_time
+
+    return slope, intercept, error, time_taken
+
+
+def coursera_linear_regression_automatic(x, y):
+    """
+    This is the implementation of the aprox to linear regression that was used in the coursera course.
+    It uses a gradient descent algorithm to find the best slope and intercept for the linear regression.
+    It uses a learning rate of 0.001 and automatic convergence.
+    """
+    start_time = time.time()
+
+    slope, intercept, error = lr.gradient_descent(
+        x, y, 0, 0, 0.001, automatic_convergence=True)
 
     print(f"Custom Slope: {slope}, Custom Intercept: {intercept}")
     print(f"Custom Error: {error}")
