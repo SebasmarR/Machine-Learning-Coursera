@@ -1,9 +1,7 @@
 import matplotlib.pyplot as plt
-from controller.lr_controller import coursera_linear_regression_automatic, coursera_linear_regression_iterations, scipy_linear_regression, custom_linear_regression
 from utils.read_csv import read_csv
-from utils.generador_csv import linear_regression_csv, multiple_linear_regression_csv
-from controller.mlr_controller import multiple_linear_regression_data, multiple_linear_regression_sklearn, multiple_linear_regression_coursera, multiple_linear_regression_custom
-
+from utils.generador_csv import *
+from controller import *
 """
 We have problems implementing the linear regression function with the Coursera course, but when we normalize the data, it works better.
 """
@@ -79,17 +77,65 @@ def multiple_linear_regression():
     print(f"Error: {error3}, Time taken: {time3:.4f} seconds")
 
 
+def polynomial_regression_func():
+    degree = 3
+    polynomial_regression_csv(degree)
+    x, y = read_csv('data/polynomial_regression_data.csv')
+    w, b, error, time_taken = polynomial_regression(x, y, degree)
+    print(f"Coefficients (w): {w}")
+    print(f"Intercept (b): {b}")
+    print(f"Error: {error}, Time taken: {time_taken:.4f} seconds")
+
+    line = [sum(w[i] * (xi ** (degree - i))
+                for i in range(len(w))) + b for xi in x]
+
+    x_sorted, line_sorted = zip(*sorted(zip(x, line)))
+
+    plt.scatter(x, y, label='Data Points')
+    plt.plot(x_sorted, line_sorted, color='orange', label='Polynomial Fit')
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.title('Polynomial Regression')
+    plt.legend()
+    plt.show()
+
+
+def logistic_regression_func():
+    x, y = read_csv('data/logistic_regression.csv')
+    w, b, z, time_taken = custom_coursera_logistic_regression(x, y)
+    print(f"\nCustom Logistic Regression:")
+    print(f"Coefficients (w): {w}")
+    print(f"Intercept (b): {b}")
+    print(f"Time taken: {time_taken:.4f} seconds")
+    print("Graphing the results...")
+    plt.scatter(x, y, label='Data Points')
+    plt.plot(x, z, color='orange', label='Sigmoid Function')
+    plt.xlabel('Tumor Size X')
+    plt.ylabel('Malignant Probability')
+    plt.title('Logistic Regression')
+    plt.legend()
+    plt.show()
+
+
 print("Regression Analysis Tool: ")
 print("This regression analysis tool allows you to perform linear and multiple linear regression with libraries and with custom codes.")
 print("Select the type of regression you want to perform:")
 print("1. Linear Regression")
 print("2. Multiple Linear Regression")
-choice = input("Enter your choice (1 or 2): ")
+print("3. Polynomial Regression")
+print("4. Logistic Regression")
+choice = input("Enter your choice: ")
 if choice == "1":
     linear_regression_func()
 
 elif choice == "2":
     multiple_linear_regression()
+
+elif choice == "3":
+    polynomial_regression_func()
+
+elif choice == "4":
+    logistic_regression_func()
 
 else:
     print("Invalid choice")

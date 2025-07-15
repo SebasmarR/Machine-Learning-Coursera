@@ -68,7 +68,7 @@ def normalize_data(x):
     mean = np.mean(x)
     std_dev = np.std(x)
 
-    normalized_x = (x - mean) / std_dev
+    normalized_x = np.divide((x - mean), std_dev)
     return normalized_x, mean, std_dev
 
 

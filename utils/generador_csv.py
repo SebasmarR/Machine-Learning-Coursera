@@ -41,3 +41,32 @@ def multiple_linear_regression_csv():
             f.write(f"{weight},{volume},{co2}\n")
 
     print(f"File created: {file}")
+
+
+def polynomial_regression_csv(degree):
+    """
+    Generates a CSV file with random data for polynomial regression.
+    The data will be generated such that it can be fitted with a polynomial of degree 3.
+    """
+
+    num_rows = 50
+    file = "data/polynomial_regression_data.csv"
+
+    if degree < 1:
+        raise ValueError(
+            "Degree must be at least 2. Use linear regression_csv() for degree 1.")
+
+    coefficients = [random.uniform(-5, 5) for _ in range(degree)]
+    d = 23
+    with open(file, "w") as f:
+        f.write("x,y\n")
+
+        for x in range(num_rows):
+            y = sum(coefficients[i] * (x ** (degree - i))
+                    for i in range(degree)) + d
+
+            f.write(f"{x},{y}\n")
+
+    print(f"File created: {file}")
+    print(f"Coefficients: {coefficients}")
+    print(f"Constant term: {d}")
