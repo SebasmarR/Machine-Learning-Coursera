@@ -14,7 +14,7 @@ def sigmoid_function(z):
     return 1 / (1 + np.exp(-z))
 
 
-def compute_decision_boundary_line(coefficients, intercept, x1_range):
+def decision_boundary_line(coefficients, intercept, x1_range):
     """
     Computes the decision boundary line for 2D logistic regression.
 
