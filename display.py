@@ -101,20 +101,7 @@ def polynomial_regression_func():
 
 
 def logistic_regression_func():
-    x, y = read_csv('data/logistic_regression.csv')
-    w, b, z, time_taken = custom_coursera_logistic_regression(x, y)
-    print(f"\nCustom Logistic Regression:")
-    print(f"Coefficients (w): {w}")
-    print(f"Intercept (b): {b}")
-    print(f"Time taken: {time_taken:.4f} seconds")
-    print("Graphing the results...")
-    plt.scatter(x, y, label='Data Points')
-    plt.plot(x, z, color='orange', label='Sigmoid Function')
-    plt.xlabel('Tumor Size X')
-    plt.ylabel('Malignant Probability')
-    plt.title('Logistic Regression')
-    plt.legend()
-    plt.show()
+    print("Working on it...")
 
 
 print("Regression Analysis Tool: ")

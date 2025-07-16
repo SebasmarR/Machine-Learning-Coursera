@@ -10,9 +10,9 @@ def custom_coursera_logistic_regression(x, y):
 
     start_time = time.time()
 
-    w, b, z = lgr.logistic_regression(x, y)
+    # w, b, z = lgr.logistic_regression(x, y)
 
     end_time = time.time()
     time_taken = end_time - start_time
 
-    return w, b, z, time_taken
+    # return w, b, z, time_taken
