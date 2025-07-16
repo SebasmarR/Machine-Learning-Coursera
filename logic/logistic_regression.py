@@ -87,8 +87,11 @@ def derivatives(x, y, coefficients, intercept):
         raise ValueError("Input lists x and y must have the same length.")
 
     z = np.dot(x, coefficients) + intercept
+
     predictions = sigmoid_function(z)
+
     error = predictions - y
+
     dw = np.dot(x.T, error)
     db = np.sum(error)
 
