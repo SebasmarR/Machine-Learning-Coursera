@@ -8,8 +8,8 @@ import time
 def multiple_linear_regression_data():
     df = pandas.read_csv("data/multiple_linear_regression_data.csv")
 
-    x_df = df[['Weight', 'Volume']]
-    y_df = df['CO2']
+    x_df = df[['x1', 'x2']]
+    y_df = df['y']
     x = x_df.values.tolist()
     y = y_df.values.tolist()
 

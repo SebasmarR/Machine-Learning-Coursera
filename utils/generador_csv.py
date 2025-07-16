@@ -29,16 +29,15 @@ def multiple_linear_regression_csv():
     file = "data/multiple_linear_regression_data.csv"
 
     with open(file, "w") as f:
-        f.write("Weight,Volume,CO2\n")
+        f.write("x1,x2,y\n")
 
         for _ in range(num_rows):
-            weight = random.uniform(1, 100) + random.gauss(0, 30)
-            volume = random.uniform(1, 100) + random.gauss(0, 30)
+            x1 = random.uniform(1, 100) + random.gauss(0, 30)
+            x2 = random.uniform(1, 100) + random.gauss(0, 30)
 
-            # CO2 es una mezcla sin relación clara
-            co2 = random.uniform(1, 20000) + random.gauss(0, 10000) + \
-                random.choice([weight, volume, weight * volume, 0])
-            f.write(f"{weight},{volume},{co2}\n")
+            y = random.uniform(1, 20000) + random.gauss(0, 10000) + \
+                random.choice([x1, x2, x1 * x2, 0])
+            f.write(f"{x1},{x2},{y}\n")
 
     print(f"File created: {file}")
 
@@ -70,3 +69,27 @@ def polynomial_regression_csv(degree):
     print(f"File created: {file}")
     print(f"Coefficients: {coefficients}")
     print(f"Constant term: {d}")
+
+
+def logistic_regression_csv():
+    """
+    Generates a CSV file with linearly separable data for logistic regression.
+    The data has two features (x1, x2) and a binary label (y).
+    """
+    num_rows_per_class = 50
+    file = "data/logistic_regression_data.csv"
+
+    with open(file, "w") as f:
+        f.write("x1,x2,y\n")
+
+        for _ in range(num_rows_per_class):
+            x1 = random.uniform(1.0, 3.0) + random.gauss(0, 0.3)
+            x2 = random.uniform(1.5, 3.5) + random.gauss(0, 0.3)
+            f.write(f"{x1},{x2},0\n")
+
+        for _ in range(num_rows_per_class):
+            x1 = random.uniform(5.0, 7.0) + random.gauss(0, 0.3)
+            x2 = random.uniform(4.5, 6.5) + random.gauss(0, 0.3)
+            f.write(f"{x1},{x2},1\n")
+
+    print(f"File created: {file}")

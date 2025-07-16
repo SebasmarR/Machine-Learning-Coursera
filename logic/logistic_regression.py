@@ -1,4 +1,4 @@
-from . import linear_regression as lr
+from .multiple_linear_regression import multiple_linear_regression
 import numpy as np
 
 
@@ -38,26 +38,6 @@ def decision_boundary_line(coefficients, intercept, x1_range):
     return x1_range, x2
 
 
-def classify(x, coefficients, intercept):
-    """
-    Classifies the input features using the logistic regression model.
-    Args:
-        x (list or np.ndarray): Input features.
-        coefficients (np.ndarray): Coefficients of the logistic regression model.
-        intercept (float): Intercept of the logistic regression model.
-
-    Returns:
-        np.ndarray: Decision boundary values.
-    """
-    coefficients = np.array(coefficients)
-
-    z = np.dot(x, coefficients) + intercept
-
-    results = np.where(z >= 0, 1, 0)
-
-    return results
-
-
 def error_function(x, y, coefficients, intercept):
     """
     Calculate the error for a logistic regression model.
@@ -86,3 +66,97 @@ def error_function(x, y, coefficients, intercept):
                            (1 - y) * np.log(1 - predictions))
 
     return total_error
+
+
+def derivatives(x, y, coefficients, intercept):
+    """
+    Calculate the derivatives of the error function with respect to coefficients and intercept.
+    Args:
+        x (list): List of input features.
+        y (list): List of target values.
+        coefficients (np.ndarray): Coefficients of the logistic regression model.
+        intercept (float): Intercept of the logistic regression model.
+
+    Returns:
+        tuple: Derivatives with respect to coefficients and intercept.
+    """
+    x = np.array(x)
+    y = np.array(y)
+
+    if len(x) != len(y):
+        raise ValueError("Input lists x and y must have the same length.")
+
+    z = np.dot(x, coefficients) + intercept
+    predictions = sigmoid_function(z)
+    error = predictions - y
+    dw = np.dot(x.T, error)
+    db = np.sum(error)
+
+    return dw, db
+
+
+def normalize_data(x):
+    """
+    Normalize each feature in the input dataset.
+    Args:
+        x (list or np.ndarray): Input features.
+
+    Returns:
+        tuple: Normalized features, means, and standard deviations per column.
+    """
+    x = np.array(x)
+    mean = np.mean(x, axis=0)
+    std_dev = np.std(x, axis=0)
+
+    normalized_x = (x - mean) / std_dev
+    return normalized_x, mean, std_dev
+
+
+def denormalize_coefficients(w, b, mean_x, std_x):
+    """
+    Convert coefficients from normalized space back to original feature scale.
+    Args:
+        w (np.ndarray): Coefficients from normalized data.
+        b (float): Intercept from normalized data.
+        mean_x (np.ndarray): Mean of each feature.
+        std_x (np.ndarray): Standard deviation of each feature.
+
+    Returns:
+        tuple: Denormalized coefficients and intercept.
+    """
+    w_real = w / std_x
+    b_real = b - np.sum((w * mean_x) / std_x)
+    return w_real, b_real
+
+
+def gradient_descent(x, y, learning_rate=0.01, iterations=1000):
+    """
+    Perform gradient descent to optimize the logistic regression model.
+    Args:
+        x (list or np.ndarray): Input features.
+        y (list or np.ndarray): Target values.
+        learning_rate (float): Learning rate for gradient descent.
+        iterations (int): Number of iterations for gradient descent.
+
+    Returns:
+        tuple: Optimized coefficients and intercept.
+    """
+
+    x = np.array(x)
+    y = np.array(y)
+
+    x_normalized, mean, std_dev = normalize_data(x)
+
+    coefficients, intercept, _ = multiple_linear_regression(x_normalized, y)
+
+    for _ in range(iterations):
+        dw, db = derivatives(x_normalized, y, coefficients, intercept)
+        coefficients -= learning_rate * dw
+        intercept -= learning_rate * db
+
+    coefficients, intercept = denormalize_coefficients(
+        coefficients, intercept, mean, std_dev)
+
+    error = error_function(x, y, coefficients, intercept)
+
+    return coefficients, intercept, error
