@@ -74,7 +74,25 @@ def normalize_data(x):
     std_dev = np.std(x, axis=0)
 
     normalized_x = (x - mean) / std_dev
-    return normalized_x
+    return normalized_x, mean, std_dev
+
+
+def denormalize_data(w, b, mean, std_dev):
+    """
+    Denormalize the input features.
+    Args:
+        x (np.ndarray): Normalized input features.
+        mean (np.ndarray): Mean of the original data.
+        std_dev (np.ndarray): Standard deviation of the original data.
+
+    Returns:
+        np.ndarray: Normalized input features.
+    """
+
+    denormalized_w = w / std_dev
+    denormalized_b = b - np.sum((w * mean) / std_dev)
+
+    return denormalized_w, denormalized_b
 
 
 def gradient_descent(x, y, learning_rate, iterations):
@@ -95,7 +113,8 @@ def gradient_descent(x, y, learning_rate, iterations):
     if len(x) == 0 or len(y) == 0:
         raise ValueError("Input lists x and y must not be empty.")
 
-    x = normalize_data(x)
+    x_original = np.array(x)
+    x, mean, std_dev = normalize_data(x)
     w = np.zeros(len(x[0]))
     b = 0
     for _ in range(iterations):
@@ -103,8 +122,9 @@ def gradient_descent(x, y, learning_rate, iterations):
         w -= learning_rate * dw
         b -= learning_rate * db
 
+    w, b = denormalize_data(w, b, mean, std_dev)
     # Calculates the error after the iterations
-    error = error_function(x, y, w, b)
+    error = error_function(x_original, y, w, b)
 
     return w, b, error
 
