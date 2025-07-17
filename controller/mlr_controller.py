@@ -3,6 +3,7 @@ from sklearn import linear_model
 import logic.multiple_linear_regression as mlr
 from sklearn.metrics import mean_squared_error
 import time
+from utils.generador_csv import multiple_linear_regression_csv
 
 
 def multiple_linear_regression_data():
@@ -62,3 +63,28 @@ def multiple_linear_regression_custom(x, y):
     end_time = time.time()
     time_taken = end_time - start_time
     return w, b, error, time_taken
+
+
+def multiple_linear_regression_func():
+
+    multiple_linear_regression_csv()
+    x_df, y_df, x, y = multiple_linear_regression_data()
+
+    w, b, error, time = multiple_linear_regression_sklearn(x_df, y_df)
+    w2, b2, error2, time2 = multiple_linear_regression_coursera(x, y)
+    w3, b3, error3, time3 = multiple_linear_regression_custom(x, y)
+
+    print(f"\nSklearn Multiple Linear Regression:")
+    print(f"Slopes (w): {w}")
+    print(f"Intercept (b): {b}")
+    print(f"Error: {error}, Time taken: {time:.4f} seconds")
+
+    print(f"\nCoursera Multiple Linear Regression:")
+    print(f"Slopes (w): {w2}")
+    print(f"Intercept (b): {b2}")
+    print(f"Error: {error2}, Time taken: {time2:.4f} seconds")
+
+    print(f"\nCustom Multiple Linear Regression:")
+    print(f"Slopes (w): {w3}")
+    print(f"Intercept (b): {b3}")
+    print(f"Error: {error3}, Time taken: {time3:.4f} seconds")
