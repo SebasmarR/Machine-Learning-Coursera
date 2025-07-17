@@ -76,7 +76,7 @@ def logistic_regression_csv():
     Generates a CSV file with linearly separable data for logistic regression.
     The data has two features (x1, x2) and a binary label (y).
     """
-    num_rows_per_class = 50
+    num_rows_per_class = 100
     file = "data/logistic_regression_data.csv"
 
     with open(file, "w") as f:
