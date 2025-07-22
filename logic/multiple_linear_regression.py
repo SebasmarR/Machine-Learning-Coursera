@@ -14,22 +14,17 @@ def error_function(x, y, w, b):
         float: The mean squared error between the predicted and actual values.
     """
 
-    if any(len(xi) != len(w) for xi in x):
-        raise ValueError(
-            "Cada x[i] debe tener la misma cantidad de variables que w.")
-
     total_error = 0.0
 
     # Calculates the total error for each point in the dataset
-    for i in range(len(x)):
-        prediction = np.dot(x[i], w) + b
-        total_error += (prediction - y[i]) ** 2
 
-    # Calculates the mean squeared error
+    prediction = np.matmul(x, w) + b
+    error = prediction - y
 
-    mean_squared_error = total_error / len(x)
+    # Implementing the regularization for the error function
+    total_error = np.mean(error ** 2) + (0.01 / len(y)) * np.sum(w ** 2)
 
-    return mean_squared_error
+    return total_error
 
 
 def derivatives(x, y, w, b):
@@ -52,12 +47,15 @@ def derivatives(x, y, w, b):
     db = 0.0
 
     # Calculates the derivatives for each point in the dataset
-    for i in range(len(x)):
-        prediction = np.dot(x[i], w) + b
-        dw += (prediction - y[i]) * np.array(x[i])
-        db += (prediction - y[i])
+    prediction = np.matmul(x, w) + b
+    error = prediction - y
+    dw = np.dot(x.T, error) / len(x)
+    db = np.sum(error) / len(x)
 
-    return dw / len(x), db / len(x)
+    # Regularization term for the derivatives
+    dw += (0.01 / len(y)) * w
+
+    return dw, db
 
 
 def normalize_data(x):
